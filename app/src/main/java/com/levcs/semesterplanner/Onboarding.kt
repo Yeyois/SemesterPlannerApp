@@ -143,12 +143,18 @@ fun OnboardingScreen(m: PlannerModel, bottomInset: Int) {
                 }
 
                 3 -> ObStep("כמה שעות בשבוע תרצה להקדיש ללימוד עצמו?") {
+                    val netFreeTime = freeAfterJob - ob.studyHours.toDouble()
+
                     Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
                         Text(
-                            "בלי העבודה — אותה כבר הורדנו מהשבוע. בשבוע רגיל יש כ־" +
-                                "${Data.n(Data.WEEK_HOURS)} ש׳ פנויות (א׳–ו׳, שישי קצר), " +
-                                "וסמסטר מלא במסלול עולה 32–44 ש׳ בשבוע — שעות שעון בכיתה " +
-                                "ולמידה עצמית יחד.",
+                            text = if (jobHrs > 0) {
+                                "בשבוע רגיל יש כ־${Data.n(Data.WEEK_HOURS)} שעות פנויות (א׳–ו׳, שישי קצר) לפני עבודה. " +
+                                        "אחרי שקיזזנו ${Data.n(jobHrs)} שעות עבודה, נותרו לך ${Data.n(freeAfterJob)} שעות פנויות.\n" +
+                                        "סמסטר מלא במסלול עולה לרוב 32–44 ש׳ בשבוע (כיתה ולמידה עצמית יחד)."
+                            } else {
+                                "בשבוע רגיל יש כ־${Data.n(Data.WEEK_HOURS)} שעות פנויות (א׳–ו׳, שישי קצר).\n" +
+                                        "סמסטר מלא במסלול עולה לרוב 32–44 ש׳ בשבוע (כיתה ולמידה עצמית יחד)."
+                            },
                             style = body(12.5, C.neutral600, lineHeight = 18.75),
                             textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxWidth(),
@@ -169,18 +175,17 @@ fun OnboardingScreen(m: PlannerModel, bottomInset: Int) {
                                 steps = (Data.STUDY_MAX - Data.STUDY_MIN).toInt() - 1,
                             ) { m.onboard = ob.copy(studyHours = it.roundToInt()) }
                             Text(
-                                if (ob.jobPercent == 0) "סה״כ ${Data.n(total)} ש׳ בשבוע"
-                                else "סה״כ ${Data.n(total)} ש׳ בשבוע (כולל ${Data.n(jobHrs)} שעות עבודה)",
+                                if (ob.jobPercent == 0) "עומס שבועי מתוכנן: ${Data.n(total.toDouble())} ש׳"
+                                else "עומס שבועי כולל: ${Data.n(total.toDouble())} ש׳ (מתוכן ${Data.n(jobHrs)} ש׳ עבודה)",
                                 style = body(12.0, C.accent700),
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.fillMaxWidth(),
                             )
-                            // אחוז המשרה חייב להשפיע על משהו: זו התקרה שהוא קובע
                             Text(
                                 if (overcommitted)
-                                    "אחרי ${Data.n(jobHrs)} שעות עבודה נשארו ${Data.n(freeAfterJob)} " +
-                                        "ש׳ פנויות בשבוע — פחות ממה שסימנת."
-                                else "אחרי העבודה נשארו ${Data.n(freeAfterJob)} ש׳ פנויות בשבוע.",
+                                    "העומס שיצרת חורג ב־${Data.n(kotlin.math.abs(netFreeTime))} ש׳ מסך הזמן הפנוי שלך בשבוע."
+                                else
+                                    "זמן פנוי שנותר: ${Data.n(netFreeTime)} ש׳ בשבוע (מעבר ללימודים ולעבודה).",
                                 style = body(11.5, if (overcommitted) C.accent else C.neutral600, lineHeight = 17.25),
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.fillMaxWidth(),
