@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.SemesterPlanner" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">#EAE9E9</item>
+        <item name="android:navigationBarColor">#D7D3D3</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+</resources>
